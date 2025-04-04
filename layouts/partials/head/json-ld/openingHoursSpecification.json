@@ -1,0 +1,10 @@
+{{- if reflect.IsSlice .Hours -}}
+{{- $count := len .Hours -}}
+[
+  {{- range $index, $hours := .Hours -}}
+  {{ (partial "head/json-ld/openingHours.json" (dict "Page" $.Page "Hours" $hours)) | safeJS }}{{ if lt $index (math.Sub $count 1) }},{{ end }}
+  {{- end -}}
+]
+{{- else -}}
+{{ (partial "head/json-ld/openingHours.json" (dict "Page" .Page "Hours" .Hours)) | safeJS }}
+{{- end -}}

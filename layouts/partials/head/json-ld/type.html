@@ -1,0 +1,5 @@
+{{- $type := false -}}
+{{- with site.Params.jsonld.type -}}
+    {{- $type = . | jsonify (dict "noHTMLEscape" true) | safeJS -}}
+{{- end -}}
+{{ return $type }}

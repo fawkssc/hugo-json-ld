@@ -1,0 +1,13 @@
+{
+  "@context": "http://schema.org",
+  "@type": {{ with partial "head/json-ld/type.html" . }}{{ . }}{{ else }}"WebSite"{{ end }},
+  "@id": "{{ site.BaseURL }}/#website",
+  "name": "{{ site.Title }}",
+  {{ with site.Params.description }}
+  "description": "{{ . }}",
+  {{ end }}
+  "url": "{{ site.BaseURL }}"
+  {{ with (partial "head/json-ld/sameAs.html" .) }}
+  , "sameAs": {{ . }}
+  {{ end }}
+}

@@ -1,0 +1,5 @@
+{
+  "@type": "GeoCoordinates",
+  "latitude": {{ .Address.latitude }},
+  "longitude": {{ .Address.longitude }}
+}

@@ -1,0 +1,5 @@
+{{- $logo := false -}}
+{{- with resources.GetMatch site.Params.jsonld.logo -}}
+    {{- $logo = (. | fingerprint).Permalink -}}
+{{- end -}}
+{{ return $logo }}

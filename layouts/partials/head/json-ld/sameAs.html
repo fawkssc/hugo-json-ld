@@ -1,0 +1,14 @@
+{{- $sameAs := slice -}}
+{{- with site.Menus.social -}}
+  {{- range . -}}
+    {{- $sameAs = $sameAs | append .URL -}}
+  {{- end -}}
+{{- end -}}
+{{- with site.Params.sameAs -}}
+  {{- $sameAs = $sameAs | append . -}}
+{{- end -}}
+{{- $result := false -}}
+{{- if $sameAs -}}
+  {{- $result = $sameAs | jsonify (dict "noHTMLEscape" true) | safeJS -}}
+{{- end -}}
+{{ return $result }}

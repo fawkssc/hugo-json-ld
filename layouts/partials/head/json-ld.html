@@ -1,0 +1,22 @@
+{{- $jsonLD := false -}}
+{{- if .Partial -}}
+    {{- $jsonLD = partial .Partial .Page -}}
+{{- else if .Template -}}
+    {{- $jsonLD = partial (printf "json-ld/%s" .Template) .Page -}}
+{{- end -}}
+{{- if and (not $jsonLD) .Page.IsPage -}}
+    {{- with .Page.Resources.Get "ld.json" -}}
+        {{- $jsonLD = .Content -}}
+    {{- end -}}
+{{- end -}}
+{{- if not $jsonLD -}}
+    {{- if templates.Exists "head/ld.json" -}}
+        {{- $jsonLD = partial "head/ld.json" .Page -}}
+    {{- else -}}
+        {{- $jsonLD = partial (printf "head/json-ld/%s.json" site.Params.jsonld.template) .Page -}}
+    {{- end -}}
+{{- end -}}
+<script type="application/ld+json">
+    {{- /* Clean JSON LD data */ -}}
+    {{ $jsonLD | transform.Unmarshal | jsonify (dict "noHTMLEscape" true) | safeJS }}
+</script>

@@ -1,0 +1,8 @@
+{
+  "@type": "OpeningHoursSpecification",
+  "dayOfWeek": {{ .Hours.dayOfWeek | jsonify (dict "noHTMLEscape" true) | safeJS }},
+  "opens": "{{ .Hours.opens }}",
+  "closes": "{{ .Hours.closes }}"
+  {{ with .Hours.validFrom }}, "validFrom": "{{ . }}"{{ end }}
+  {{ with .Hours.validThrough }}, "validThrough": "{{ . }}"{{ end }}
+}
