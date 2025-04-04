@@ -1,0 +1,15 @@
+name = 'Hugo JSON+LD'
+license = 'MIT'
+licenselink = 'https://github.com/fawkssc/hugo-json-ld/LICENSE'
+description = 'Theme description'
+
+# The home page of the theme, where the source can be found
+homepage = 'https://github.com/fawkssc/hugo-json-ld'
+
+# Taxonomy terms
+tags = ['seo', 'json-ld', 'jsonld', 'structured data']
+
+# If the theme has a single author
+[author]
+  name = 'Fawks Software Consulting'
+  homepage = 'https://www.fawkssoftwareconsulting.com'
