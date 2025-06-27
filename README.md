@@ -12,19 +12,21 @@ Add the following to the `head` block:
 
 Options:
 
-- *Partial* — *optional* The partial path to use
-- *Template* - *optional* The template name to use
+- *Graph* — *optional* The graph to use when building the structured data
 
 ## Default Configuration
 
 `config/_default/params.toml`
 ```toml
 [jsonld]
-    template = "website"
+[[jsonld.graph]]
+    name = "WebPage"
+[[jsonld.graph]]
+    name = "WebSite"
 ```
-
-## Override The Template
-
-1) Home: `partials/ld.json`
-2) Templates: `partils/json-ld/[name].json`
-3) Page Bundle: `content/[archtype]/[page]/ld.json`
+## Front Matter
+```toml
+[jsonld]
+    inheritGraph = true
+[[jsonld.graph]]
+    name = [template]
