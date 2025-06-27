@@ -1,0 +1,40 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" (or .Context.Type "Organization") -}}
+{{- $json.Set "@id" .Context.Id -}}
+{{- $json.Set "name" (or .Context.Title site.Title) -}}
+{{- with or .Context.AlternateName site.Params.alternateTitle site.Params.shortTitle }}{{ $json.Set "alternateName" . }}{{ end -}}
+{{- with or .Context.LegalName site.Params.legalName }}{{ $json.Set "legalName" . }}{{ end -}}
+{{- with or .Context.Description site.Params.description }}{{ $json.Set "description" . }}{{ end -}}
+{{- $json.Set "url" site.BaseURL -}}
+{{- with .Context.Logo -}}
+    {{- $config := partial "head/json-ld/formatConfig.html" (dict "Page" $.Page "Config" .) -}}
+    {{- with partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Context" $config) -}}{{ $json.Set "logo" . }}{{ end -}}
+{{- else with or (resources.GetMatch "logo.{svg,png,jpg,jpeg}") (resources.GetMatch "images/logo.{svg,png,jpg,jpeg}") -}}
+    {{- with partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Resource" . "Context" dict) -}}{{ $json.Set "logo" . }}{{ end -}}
+{{- end -}}
+{{- with or .Context.Email site.Params.contact.email }}{{ $json.Set "email" . }}{{ end -}}
+{{- with or .Context.Phone site.Params.contact.phone }}{{ $json.Set "telephone" . }}{{ end -}}
+{{- range cond (reflect.IsMap .Context.ContactPoint) (slice .Context.ContactPoint) .Context.ContactPoint -}}
+    {{- if not ($json.Get "contactPoint") }}{{ $json.Set "contactPoint" slice }}{{ end -}}
+    {{- with partial "head/json-ld/ContactPoint.hml" ($ | merge (dict "ContactPoint" .)) }}{{ $json.Add "contactPoint" . }}{{ end -}}
+{{- end -}}
+{{- with .Context.Address -}}
+    {{- if reflect.IsMap . -}}
+        {{- $json.Set "address" (partial "head/json-ld/PostalAddress.html" ( $ | merge (dict "Address" . "Primary" true))) -}}
+    {{- else -}}
+        {{- $json.Set "address" slice -}}
+        {{- range $index, $address := . -}}
+            {{- $json.Set "address" (partial "head/json-ld/PostalAddress.html" ( $ | merge (dict "Address" $address "Primary" (eq $index 0)))) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- with .Context.Coordinates }}{{ $json.Set "goe" (partial "head/json-ld/GeoCoordinates.html" ($ | merge (dict "Coordinates" .))) }}{{ end -}}
+{{- range cond (reflect.IsMap .Context.Hours) (slice .Context.Hours) .Context.Hours -}}
+    {{- if not ($json.Get "openingHours") }}{{ $json.Set "openingHours" slice }}{{ end -}}
+    {{- with partial "head/json-ld/OpeningHoursSpecification.html" ($ | merge (dict "Hours" .)) }}{{ $json.Add "openingHours" . }}{{ end -}}
+{{- end -}}
+{{- with .Context.Menu }}{{ $json.Set "menu" . }}{{ end -}}
+{{- with .Context.priceRange }}{{ $json.Set "priceRange" . }}{{ end -}}
+{{- with .Context.ServesCuisine }}{{ $json.Set "servicesCuisine" . }}{{ end -}}
+{{- with partial "head/json-ld/sameAs.html" . }}{{ $json.Set "sameAs" . }}{{ end -}}
+{{- return $json.Values -}}

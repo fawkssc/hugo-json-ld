@@ -1,8 +1,0 @@
-{
-  {{ if .Primary }}"@type": "PostalAddress",{{ end }}
-  "streetAddress": "{{ delimit (slice .Address.street .Address.suite) " " }}",
-  "addressLocality": "{{ .Address.city }}",
-  "addressRegion": "{{ .Address.state }}",
-  "postalCode": "{{ .Address.postalCode }}",
-  "addressCountry": "{{ .Address.country | default "US" }}"
-}

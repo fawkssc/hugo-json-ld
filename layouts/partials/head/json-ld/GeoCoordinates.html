@@ -1,0 +1,10 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "GeoCoordinates" -}}
+{{- if reflect.IsSlice .Coordinates -}}
+    {{- with index .Coordinates 0 }}{{ $json.Set "latitude" . }}{{ end -}}
+    {{- with index .Coordinates 1 }}{{ $json.Set "longitude" . }}{{ end -}}
+{{- else -}}
+    {{- with or .Coordinates.latitude .Coordinates.lat }}{{ $json.Set "latitude" . }}{{ end -}}
+    {{- with or .Coordinates.longitude .Coordinates.lon }}{{ $json.Set "longitude" . }}{{ end -}}
+{{- end -}}
+{{ return $json.Values }}

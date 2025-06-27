@@ -1,0 +1,13 @@
+{{- $resource := or .Resource (cond .Page.IsPage (.Page.Resources.GetMatch .Context.Resource) (resources.GetMatch .Context.Resource)) -}}
+{{- with .Context.Process }}{{ $resource = $resource.Process . }}{{ end -}}
+{{- if .Context.Fingerprint }}{{ $resource = $resource | fingerprint }}{{ end -}}
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "ImageObject" -}}
+{{- $json.Set "@id" (or .Context.Id $resource.Permalink) -}}
+{{- $json.Set "inLanguage" .Page.Language.LanguageCode -}}
+{{- $json.Set "url" $resource.Permalink -}}
+{{- $json.Set "contentUrl" $resource.Permalink -}}
+{{- $json.Set "width" $resource.Width -}}
+{{- $json.Set "height" $resource.Height -}}
+{{- with .Context.Caption }}{{ $json.Set "caption" . }}{{ end -}}
+{{- return $json.Values -}}

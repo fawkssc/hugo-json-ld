@@ -1,22 +1,41 @@
-{{- $jsonLD := false -}}
-{{- if .Partial -}}
-    {{- $jsonLD = partial .Partial .Page -}}
-{{- else if .Template -}}
-    {{- $jsonLD = partial (printf "json-ld/%s" .Template) .Page -}}
+{{- $jsonLD := newScratch -}}
+{{- $jsonLD.Set "@context" "https://schema.org" -}}
+{{- $jsonLD.Set "@graph" slice -}}
+{{- $config := newScratch -}}
+{{- $graph := slice -}}
+{{- if .Graph -}}
+    {{- $graph = .Graph -}}
+{{- else if .Page.Params.jsonld.graph -}}
+    {{- if and (or (not (isset .Page.Params.jsonld "inheritGraph")) .Page.Params.jsonld.inheritGraph) site.Params.jsonld.graph -}}
+        {{- $graph = site.Params.jsonld.graph | append .Page.Params.jsonld.graph -}}
+    {{- else -}}
+        {{- $graph = .Page.Params.jsonld.graph -}}
+    {{- end -}}
+{{- else if site.Params.jsonld.graph -}}
+    {{- $graph = site.Params.jsonld.graph -}}
+{{- else -}}
+    {{- $graph = slice "WebPage" "WebSite" -}}
 {{- end -}}
-{{- if and (not $jsonLD) .Page.IsPage -}}
-    {{- with .Page.Resources.Get "ld.json" -}}
-        {{- $jsonLD = .Content -}}
+{{- range $graph -}}
+    {{- $context := partial "head/json-ld/formatConfig.html" (dict "Page" $ "Config" .) -}}
+    {{- $config.Set $context.Name $context -}}
+{{- end -}}
+{{- range .Params.jsonld.graph -}}
+    {{- $context := partial "head/json-ld/formatConfig.html" (dict "Page" $ "Config" .) -}}
+    {{- with $config.Get $context.Name -}}
+        {{- $config.Set $context.Name (. | merge $context) -}}
+    {{- else -}}
+        {{- $config.Set $context.Name $context -}}
     {{- end -}}
 {{- end -}}
-{{- if not $jsonLD -}}
-    {{- if templates.Exists "head/ld.json" -}}
-        {{- $jsonLD = partial "head/ld.json" .Page -}}
-    {{- else -}}
-        {{- $jsonLD = partial (printf "head/json-ld/%s.json" site.Params.jsonld.template) .Page -}}
+{{- range $name, $context := sort $config.Values "weight" -}}
+    {{- $template := printf "head/json-ld/%s.html" (or $context.Template $context.Name) -}}
+    {{- if templates.Exists (printf "partials/%s" $template) -}}
+        {{- $json := partial $template (dict "Page" $.Page "Config" $config "Context" $context "Name" $name) -}}
+        {{- $jsonLD.Add "@graph" $json -}}
     {{- end -}}
 {{- end -}}
 <script type="application/ld+json">
     {{- /* Clean JSON LD data */ -}}
-    {{ $jsonLD | transform.Unmarshal | jsonify (dict "noHTMLEscape" true) | safeJS }}
+    {{ $jsonLD.Values | jsonify (dict "noHTMLEscape" true) | safeJS }}
 </script>

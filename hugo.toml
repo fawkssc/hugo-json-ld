@@ -1,8 +1,3 @@
-[params]
-  [params.jsonld]
-    template = "website"
-    logo = "**/logo.{svg,webp,png,jpg,jpeg,gif,bmp}"
-
 [module]
   [module.hugoVersion]
     extended = false

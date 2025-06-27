@@ -1,0 +1,8 @@
+{{- $json := newScratch -}}
+{{- if .Primary }}{{ $json.Set "@type" "PostalAddress" }}{{ end -}}
+{{- with delimit (slice .Address.street .Address.suite) " " }}{{ $json.Set "streetAddress" . }}{{ end -}}
+{{- with .Address.city }}{{ $json.Set "addressLocality" . }}{{ end -}}
+{{- with .Address.state }}{{ $json.Set "addressRegion" . }}{{ end -}}
+{{- with .Address.postalCode }}{{ $json.Set "postalCode" . }}{{ end -}}
+{{- with .Address.country }}{{ $json.Set "addressCountry" . }}{{ end -}}
+{{- return $json.Values -}}

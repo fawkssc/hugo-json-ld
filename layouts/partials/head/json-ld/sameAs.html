@@ -4,11 +4,9 @@
     {{- $sameAs = $sameAs | append .URL -}}
   {{- end -}}
 {{- end -}}
-{{- with site.Params.sameAs -}}
-  {{- $sameAs = $sameAs | append . -}}
-{{- end -}}
-{{- $result := false -}}
-{{- if $sameAs -}}
-  {{- $result = $sameAs | jsonify (dict "noHTMLEscape" true) | safeJS -}}
-{{- end -}}
-{{ return $result }}
+{{- with .Context.SameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- with site.Params.sameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- with site.Params.jsonld.sameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- with .Page.Params.sameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{- with .Page.Params.jsonld.sameAs }}{{ $sameAs = $sameAs | append . }}{{ end -}}
+{{ return $sameAs }}

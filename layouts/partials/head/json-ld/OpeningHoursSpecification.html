@@ -1,0 +1,8 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "OpeningHoursSpecification" -}}
+{{- with .Hours.dayOfWeek }}{{ $json.Set "dayOfWeek" . }}{{ end -}}
+{{- with or .Hours.opens .Hours.openAt }}{{ $json.Set "opens" . }}{{ end -}}
+{{- with or .Hours.closes .Hours.closeAt }}{{ $json.Set "closes" . }}{{ end -}}
+{{- with .Hours.validFrom }}{{ $json.Set "validFrom" . }}{{ end -}}
+{{- with or .Hours.validThrough .Hours.validTo }}{{ $json.Set "validThrough" . }}{{ end -}}
+{{ return $json.Values }}

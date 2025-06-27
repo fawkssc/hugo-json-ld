@@ -1,0 +1,23 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "WebPage" -}}
+{{- $json.Set "@id" .Context.Id -}}
+{{- $json.Set "url" .Page.Permalink -}}
+{{- with or .Context.Title .Page.Title site.Title }}{{ $json.Set "name" . }}{{ end -}}
+{{- with or .Context.Description .Page.Params.description .Page.Summary }}{{ $json.Set "description" . }}{{ end -}}
+{{- with or .Page.PublishDate .Page.Date }}{{ $json.Set "datePublished" (.Format "2006-01-02T15:04:05-07:00") }}{{ end -}}
+{{- with .Page.Lastmod }}{{ $json.Set "dateModified" (.Format "2006-01-02T15:04:05-07:00") }}{{ end -}}
+{{- $json.Set "inLanguage" .Page.Language.LanguageCode -}}
+{{- with .Config.Get (or .Context.IsPartOf "WebSite") }}{{ $json.Set "isPartOf" (dict "@id" .Id) }}{{ end -}}
+{{- with .Config.Get (or .Context.About "Organization") }}{{ $json.Set "about" (dict "@id" .Id) }}{{ end -}}
+{{- with .Config.Get (or .Context.Breadcrumb "Breadcrumb") }}{{ $json.Set "breadcrumb" (dict "@id" .Id) }}{{ end -}}
+{{- with .Config.Get (or .Context.PrimaryImage "WebPageImage") -}}
+    {{- $json.Set "primaryImageOfPage" (dict "@id" .Id) -}}
+    {{- $json.Set "image" (dict "@id" .Id) -}}
+{{- end -}}
+{{- with .Context.Thumbnail -}}
+    {{- $config := partial "head/json-ld/formatConfig.html" (dict "Page" $.Page "Config" .) -}}
+    {{- $imageObject := partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Context" $config) -}}
+    {{- $json.Set "thumbnail" $imageObject -}}
+    {{- $json.Set "thumbnailUrl" $imageObject.url -}}
+{{- end -}}
+{{- return $json.Values -}}

@@ -1,0 +1,11 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "WebSite" -}}
+{{- $json.Set "@id" .Context.Id -}}
+{{- $json.Set "url" site.BaseURL -}}
+{{- $json.Set "name" (or .Context.Title site.Title) -}}
+{{- with or .Context.Description site.Params.description }}{{ $json.Set "description" . }}{{ end -}}
+{{- with or .Context.AlternateName site.Params.alternateTitle site.Params.shortTitle }}{{ $json.Set "alternateName" . }}{{ end -}}
+{{- $json.Set "inLanguage" .Page.Language.LanguageCode -}}
+{{- with .Config.Get (or .Context.publisher "Organization") }}{{ $json.Set "publisher" (dict "@id" .Id) }}{{ end -}}
+{{- with partial "head/json-ld/sameAs.html" . }}{{ $json.Set "sameAs" . }}{{ end -}}
+{{- return $json.Values -}}

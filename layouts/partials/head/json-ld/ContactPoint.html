@@ -1,0 +1,6 @@
+{{- $json := newScratch -}}
+{{- $json.Set "@type" "ContactPoint" -}}
+{{- with .ContactPoint.email }}{{ $json.Set "email" . }}{{ end -}}
+{{- with .ContactPoint.phone }}{{ $json.Set "telephone" . }}{{ end -}}
+{{- with .ContactPoint.type }}{{ $json.Set "contactType" . }}{{ end -}}
+{{ return $json.Values }}

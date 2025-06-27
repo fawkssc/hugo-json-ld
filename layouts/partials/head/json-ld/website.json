@@ -1,13 +1,11 @@
 {
-  "@context": "http://schema.org",
-  "@type": {{ with partial "head/json-ld/type.html" . }}{{ . }}{{ else }}"WebSite"{{ end }},
+  "@type": "WebSite",
   "@id": "{{ site.BaseURL }}/#website",
-  "name": "{{ site.Title }}",
-  {{ with site.Params.description }}
+  "name": "{{ or site.Params.jsonld.website.name site.Title }}",
+  {{- with or site.Params.jsonld.website.description site.Params.description -}}
   "description": "{{ . }}",
-  {{ end }}
-  "url": "{{ site.BaseURL }}"
-  {{ with (partial "head/json-ld/sameAs.html" .) }}
-  , "sameAs": {{ . }}
-  {{ end }}
+  {{- end -}}
+  "url": "{{ site.BaseURL }}",
+  {{- with (partial "head/json-ld/sameAs.html" .) }}"sameAs": {{ . }},{{ end -}}
+  "inLanguage": "{{ partial "head/json-ld/inLanguage.html" . }}"
 }

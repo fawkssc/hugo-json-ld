@@ -1,5 +1,0 @@
-{
-  "@type": "ContactPoint"
-  {{ with .Contact.email }}, "email": "{{ . }}"{{ end }}
-  {{ with .Contact.phone }}, "telephone": "{{ . }}"{{ end }}
-}

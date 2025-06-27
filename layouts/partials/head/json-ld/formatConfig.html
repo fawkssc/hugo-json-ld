@@ -1,0 +1,8 @@
+{{- $config := newScratch -}}
+{{- if reflect.IsMap .Config -}}
+    {{- range $k, $v := .Config }}{{ $config.Set (strings.FirstUpper $k) $v }}{{ end -}}
+{{- else -}}
+    {{- $config.Set "Name" .Config -}}
+{{- end -}}
+{{- with or ($config.Get "Id") ($config.Get "Name") }}{{ $config.Set "Id" (printf "%s#%s" site.BaseURL .) }}{{ end -}}
+{{- return $config.Values -}}
