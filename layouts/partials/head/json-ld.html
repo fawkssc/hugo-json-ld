@@ -20,14 +20,6 @@
     {{- $context := partial "head/json-ld/formatConfig.html" (dict "Page" $ "Config" .) -}}
     {{- $config.Set $context.Name $context -}}
 {{- end -}}
-{{- range .Params.jsonld.graph -}}
-    {{- $context := partial "head/json-ld/formatConfig.html" (dict "Page" $ "Config" .) -}}
-    {{- with $config.Get $context.Name -}}
-        {{- $config.Set $context.Name (. | merge $context) -}}
-    {{- else -}}
-        {{- $config.Set $context.Name $context -}}
-    {{- end -}}
-{{- end -}}
 {{- range $name, $context := sort $config.Values "weight" -}}
     {{- $template := printf "head/json-ld/%s.html" (or $context.Template $context.Name) -}}
     {{- if templates.Exists (printf "partials/%s" $template) -}}
