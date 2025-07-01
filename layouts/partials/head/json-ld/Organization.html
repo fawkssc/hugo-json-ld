@@ -10,7 +10,7 @@
     {{- $config := partial "head/json-ld/formatConfig.html" (dict "Page" $.Page "Config" .) -}}
     {{- with partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Context" $config) -}}{{ $json.Set "logo" . }}{{ end -}}
 {{- else with or (resources.GetMatch "logo.{svg,png,jpg,jpeg}") (resources.GetMatch "images/logo.{svg,png,jpg,jpeg}") -}}
-    {{- with partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Resource" . "Context" dict) -}}{{ $json.Set "logo" . }}{{ end -}}
+    {{- with partial "head/json-ld/ImageObject.html" (dict "Page" $.Page "Resource" . "Context" (dict "Fingerprint" true)) -}}{{ $json.Set "logo" . }}{{ end -}}
 {{- end -}}
 {{- with or .Context.Email site.Params.contact.email }}{{ $json.Set "email" . }}{{ end -}}
 {{- with or .Context.Phone site.Params.contact.phone }}{{ $json.Set "telephone" . }}{{ end -}}

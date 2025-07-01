@@ -1,4 +1,4 @@
-{{- $resource := or .Resource (cond .Page.IsPage (.Page.Resources.GetMatch .Context.Resource) (resources.GetMatch .Context.Resource)) -}}
+{{- $resource := or .Resource (cond (and (not .Context.Global) .Page.IsPage) (.Page.Resources.GetMatch .Context.Resource) (resources.GetMatch .Context.Resource)) -}}
 {{- with .Context.Process }}{{ $resource = $resource.Process . }}{{ end -}}
 {{- if .Context.Fingerprint }}{{ $resource = $resource | fingerprint }}{{ end -}}
 {{- $json := newScratch -}}
