@@ -5,15 +5,15 @@
 {{- with .Context.Items -}}
     {{- range $index, $item := sort . "position" -}}
         {{- with $page := site.GetPage $item.pageRef -}}
-            {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" (add $index 1) "name" (or $item.title $page.Title) "url" $page.Permalink) -}}
+            {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" (add $index 1) "name" (or $item.title $page.Title) "item" $page.Permalink) -}}
         {{- end -}}
     {{- end -}}
 {{- else -}}
     {{- with site.GetPage "/" -}}
-        {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" 1 "name" .Title "url" .Permalink) -}}
+        {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" 1 "name" .Title "item" .Permalink) -}}
     {{- end -}}
     {{- if .Page.IsPage -}}
-        {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" 2 "name" .Page.Title "url" .Page.Permalink) -}}
+        {{- $json.Add "itemListElement" (dict "@type" "ListItem" "position" 2 "name" .Page.Title "item" .Page.Permalink) -}}
     {{- end -}}
 {{- end -}}
 {{- return $json.Values -}}
