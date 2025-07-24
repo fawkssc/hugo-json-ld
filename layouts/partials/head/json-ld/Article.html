@@ -14,12 +14,16 @@
 {{- with .Config.Get (or .Context.IsPartOf "WebSite") }}{{ $json.Set "isPartOf" (dict "@id" .Id) }}{{ end -}}
 {{- with .Config.Get (or .Context.WebPage "WebPage") }}{{ $json.Set "mainEntityOfPage" (dict "@id" .Id) }}{{ end -}}
 {{- with .Config.Get (or .Context.Publisher "Organization") }}{{ $json.Set "publisher" (dict "@id" .Id) }}{{ end -}}
-{{- if reflect.IsMap .Context.Author -}}
-    {{- $json.Set "author" .Context.Author -}}
-    {{- if not ($json.GetInMap "author" "@type") }}{{ $json.SetInMap "author" "@type" "Person" }}{{ end -}}
-    {{ $json.SetInMap "author" "@id" (printf "%s#%s" site.BaseURL (or ($json.GetInMap "author" "@id") "article-author")) }}
-{{- else -}}
-    {{- with or (.Config.Get .ContextAuthor) (.Config.Get "ArticleAuthor") (.Config.Get "Organization") }}{{ $json.Set "author" (dict "@id" .Id) }}{{ end -}}
+{{- with .Context.Author -}}
+    {{- if reflect.IsMap . -}}
+        {{- $json.Set "author" . -}}
+        {{- if not ($json.GetInMap "author" "@type") }}{{ $json.SetInMap "author" "@type" "Person" }}{{ end -}}
+        {{ $json.SetInMap "author" "@id" (printf "%s#%s" site.BaseURL (or ($json.GetInMap "author" "@id") "article-author")) }}
+    {{- else -}}
+        {{- with (.Config.Get .) }}{{ $json.Set "author" (dict "@id" .Id) }}{{ end -}}
+    {{- end -}}
+{{- else with or (.Config.Get "ArticleAuthor") (.Config.Get "Organization") -}}
+    {{- $json.Set "author" (dict "@id" .Id) -}}
 {{- end -}}
 {{- with .Context.Image -}}
     {{- $config := partial "head/json-ld/formatConfig.html" (dict "Page" $.Page "Config" .) -}}
